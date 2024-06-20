@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("RaidMe", "Captain Blake", "1.0.0")]
+    [Info("RaidMe", "Captain Blake", "1.0.1")]
     [Description("Allows players to create a temporary PvP zone around their Tool Cupboard (TC) using the /raidme command. " +
                  "Admins have additional commands to list, remove, or wipe all PvP zones. " +
                  "Features configurable zone radius, customizable messages, and automatic cleanup of invalid zones.")]
@@ -58,7 +58,6 @@ namespace Oxide.Plugins
         void OnServerInitialized()
         {
             RemoveInvalidZones();
-            RemoveGlobalMarkers();
             PlaceMapMarkers();
             Puts("Initialization complete.");
         }
@@ -384,6 +383,21 @@ namespace Oxide.Plugins
             }
         }
         
+        private void PlaceMapMarkers()
+        {
+            var tcIds = _mapMarkers.Select(pair => pair.Key).ToList();
+            foreach (var tcId in tcIds)
+            {
+                var tc = BaseNetworkable.serverEntities.Find(tcId) as BuildingPrivlidge;
+                if (!tc)
+                {
+                    _mapMarkers.Remove(tcId);
+                    continue;
+                }
+                CreateMapMarker(tc);
+            }
+        }
+        
         private void RemoveGlobalMarkers()
         {
             var globalMarkers = new List<MapMarkerGenericRadius>();
@@ -398,21 +412,6 @@ namespace Oxide.Plugins
             foreach (var marker in globalMarkers.Where(marker => marker != null)) 
             { 
                 marker.Kill();
-            }
-        }
-
-        private void PlaceMapMarkers()
-        {
-            var tcIds = _mapMarkers.Select(pair => pair.Key).ToList();
-            foreach (var tcId in tcIds)
-            {
-                var tc = BaseNetworkable.serverEntities.Find(tcId) as BuildingPrivlidge;
-                if (!tc)
-                {
-                    _mapMarkers.Remove(tcId);
-                    continue;
-                }
-                CreateMapMarker(tc);
             }
         }
         
@@ -453,6 +452,22 @@ namespace Oxide.Plugins
             if (!_raidMeZones.Values.Contains(entity.net.ID)) return;
             var tcOwner = _raidMeZones.First(kvp => kvp.Value == entity.net.ID).Key;
             RemoveZone(tcOwner);
+        }
+        
+        void OnServerSave()
+        {
+            SaveData();
+        }
+        
+        void Unload()
+        {
+            foreach (var localTimer in _zoneTimers.Values)
+            {
+                localTimer.Destroy();
+            }
+            RemoveGlobalMarkers();
+            SaveData();
+            Puts("Plugin unloaded.");
         }
         
         #endregion
