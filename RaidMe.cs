@@ -96,11 +96,13 @@ namespace Oxide.Plugins
                     break;
                 
                 case "help":
-                    SendReply(player, "List of available commands:\n" +
-                                      "/raidme start - Create a PvP zone around a Tool Cupboard (TC) you own.\n" +
-                                      $"/raidme remove - Schedule the removal of the PvP zone around your TC after {_config.ZoneDeactivationDelay} seconds.\n" +
-                                      "/raidme cancel - Cancel the scheduled removal of the PvP zone around your TC.\n" +
-                                      "/raidme help - Display this help message.");
+                    SendReply(player, "/raidme start: Creates a PvP zone around a designated TC.");
+                    SendReply(player, "/raidme remove: Starts 180s timer to remove PvP zone.");
+                    SendReply(player, "/raidme cancel: Cancels the removal timer.");
+                    SendReply(player, "PvP zone gets removed when the TC gets destroyed.");
+                    SendReply(player, "You can only have 1 PvP zone active at a time.");
+                    SendReply(player, "Leaving the zone, taking or dealing damage cancels removal.");
+                    SendReply(player, "Buildings in the PvP zone can be destroyed.");
                     break;
 
                 default:
