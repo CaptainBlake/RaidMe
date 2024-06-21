@@ -4,6 +4,23 @@
 
 The `RaidMe` plugin allows players to create a temporary PvP zone around their Tool Cupboard (TC) using the `/raidme` command. Admins have additional commands to list, remove, or wipe all PvP zones. The plugin features configurable zone radius, customizable messages, and automatic cleanup of invalid zones.
 
+## Description
+
+The `RaidMe` plugin provides a unique PvP experience by allowing players to create a temporary PvP zone around their Tool Cupboard (TC). The plugin offers the following commands:
+
+- `/raidme start`: Creates a PvP zone around a designated TC.
+- `/raidme remove`: Starts a 180-second timer to remove the PvP zone.
+- `/raidme cancel`: Cancels the scheduled removal of your PvP zone.
+- `/raidme help`: Displays a list of available commands and their usage.
+
+### How it works
+
+- PvP Zone Creation: Use `/raidme start` to create a PvP zone around your TC.
+- Zone Removal: The PvP zone gets removed once the designated TC is destroyed or by using `/raidme remove`.
+- Removal Timer: Use `/raidme remove` to start the 180-second removal timer. You must stay within the zone and avoid taking or dealing damage during this period.
+- Single Zone Limitation: You can only have one PvP zone active at a time.
+- Destructible Buildings: All buildings within the PvP zone can be destroyed.
+
 ## Features
 
 - Create a temporary PvP zone around a player's TC.
@@ -11,6 +28,15 @@ The `RaidMe` plugin allows players to create a temporary PvP zone around their T
 - Customizable messages for entering and leaving the zone.
 - Automatic cleanup of invalid zones.
 - Admin commands to manage all PvP zones.
+
+## Requirements
+
+This plugin requires the following plugins to be installed:
+
+- [TruePVE](https://umod.org/plugins/true-pve): This plugin is used to manage the PvE environment.
+- [ZoneManager](https://umod.org/plugins/zone-manager): This plugin is used to manage the PvP zones.
+
+Please ensure these plugins are installed and properly configured before using the `RaidMe` plugin.
 
 ## Installation
 
@@ -60,70 +86,6 @@ The default configuration is automatically created when the plugin is first load
 - `/raidmeadmin remove` - Remove the PvP zone in which you are standing.
 - `/raidmeadmin wipe` - Remove all PvP zones.
 - `/raidmeadmin help` - Display the help message.
-
-## Data Management
-
-The plugin saves and loads data automatically. The data is stored in the `oxide/data/RaidMe.json` file.
-
-### Data Format
-
-- `RaidZoneList`: List of active PvP zones.
-- `TcMapMarker`: List of map markers for the TCs.
-
-## Hooks
-
-### `OnPlayerAttack(BasePlayer attacker, HitInfo info)`
-
-- Cancels the removal timer if the attacker or target is within a PvP zone.
-
-### `OnExitZone(string zoneID, BasePlayer player)`
-
-- Cancels the removal timer if the player exits their PvP zone.
-
-### `OnEntityKill(BaseNetworkable entity)`
-
-- Removes the PvP zone if the TC is destroyed.
-
-## Development
-
-### Variables and Constants
-
-- `PermissionUse`: Permission string for player commands.
-- `PermissionAdmin`: Permission string for admin commands.
-- `DataFileName`: Name of the data file.
-- `TcSearchRadius`: Search radius for finding TCs.
-
-### Configuration
-
-- `RaidZoneBaseRadius`: Base radius for the PvP zone.
-- `RaidZoneMinRadius`: Minimum radius for the PvP zone.
-- `RaidZoneMaxRadius`: Maximum radius for the PvP zone.
-- `RaidZoneRadiusMultiplier`: Multiplier for the PvP zone radius.
-- `RaidZoneExclusionBaseRadius`: Base radius for the exclusion zone.
-- `RaidZoneExclusionMinRadius`: Minimum radius for the exclusion zone.
-- `RaidZoneExclusionMaxRadius`: Maximum radius for the exclusion zone.
-- `RaidZoneExclusionRadiusMultiplier`: Multiplier for the exclusion zone radius.
-- `ZoneDeactivationDelay`: Delay before the PvP zone is deactivated.
-- `MarkerColor`: Color of the map marker.
-- `MarkerAplha`: Alpha transparency of the map marker.
-- `MarkerSize`: Size of the map marker.
-
-### Functions
-
-- `CreateRaidMeZone(BasePlayer player, BuildingPrivlidge tc)`: Creates a PvP zone around the specified TC.
-- `RemoveRaidMeZone(BasePlayer player)`: Schedules the removal of the PvP zone around the player's TC.
-- `CancelRemoveTimer(BasePlayer player)`: Cancels the removal timer for the player's PvP zone.
-- `WipeAllZones(BasePlayer player)`: Removes all PvP zones.
-
-### Helpers
-
-- `TryGetValidTc(BasePlayer player, out BuildingPrivlidge playerTc)`: Attempts to find a valid TC for the player.
-- `FindValidTc(BasePlayer player)`: Finds a valid TC for the player.
-- `RemoveZone(ulong tcOwner)`: Removes the PvP zone for the specified player.
-- `CreateMapMarker(BuildingPrivlidge tc)`: Creates a map marker for the specified TC.
-- `RemoveInvalidZones()`: Removes invalid PvP zones.
-- `RemoveGlobalMarkers()`: Removes all global map markers.
-- `PlaceMapMarkers()`: Places map markers for all active TCs.
 
 ## License
 
